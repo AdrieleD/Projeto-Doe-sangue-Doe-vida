@@ -1,0 +1,25 @@
+{
+  "name": "Projeto-Doe-sangue-Doe-vida",
+  "version": "1.0.0",
+  "description": "",
+  "main": "scripts.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AdrieleD/Projeto-Doe-sangue-Doe-vida.git"
+  },
+  "keywords": [],
+  "author": "Adriele Dutra Souza",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AdrieleD/Projeto-Doe-sangue-Doe-vida/issues"
+  },
+  "homepage": "https://github.com/AdrieleD/Projeto-Doe-sangue-Doe-vida#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.2",
+    "nunjucks": "^3.2.0"
+  }
+}
