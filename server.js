@@ -8,6 +8,16 @@ server.use(express.static("public"));
 // habilitar "body" do formulário
 server.use(express.urlencoded({ extended: true }));
 
+// configurando a conexão com o banco de dados
+const Pool = require("pg").Pool;
+const db = new Pool({
+  user: "postgres",
+  password: "000000",
+  host: "localhost",
+  port: 5432,
+  database: "doe"
+});
+
 // configurando a template engine
 const nunjucks = require("nunjucks");
 nunjucks.configure("./", {
@@ -15,29 +25,14 @@ nunjucks.configure("./", {
   noCache: true
 });
 
-// lista de doadores: Vetor ou Array
-const donors = [
-  {
-    name: "João da Silva",
-    blood: "AB+"
-  },
-  {
-    name: "Maria dos Santos",
-    blood: "B+"
-  },
-  {
-    name: "Joaquim Pereira",
-    blood: "A-"
-  },
-  {
-    name: "Pedro Souza",
-    blood: "O+"
-  }
-];
-
 // configurar a apresentação da página
 server.get("/", function(req, res) {
-  return res.render("index.html", { donors });
+  db.query("SELECT * FROM donors", function(err, result) {
+    if (err) return res.send("Erro de banco de dados.");
+
+    const donors = result.rows;
+    return res.render("index.html", { donors });
+  });
 });
 
 server.post("/", function(req, res) {
@@ -46,13 +41,21 @@ server.post("/", function(req, res) {
   const email = req.body.email;
   const blood = req.body.blood;
 
-  // coloca valores dentro do array
-  donors.push({
-    name: name,
-    blood: blood
-  });
+  if (name == "" || email == "" || blood == "") {
+    return res.send("Todos os campos são obrigatórios.");
+  }
 
-  return res.redirect("/");
+  // coloca valores dentro do banco de dados
+  const query = `INSERT INTO donors ("name", "email", "blood") VALUES ($1, $2, $3)`;
+  const values = [name, email, blood];
+
+  db.query(query, values, function(err) {
+    // fluxo de erro
+    if (err) return res.send("Erro no banco de dados.");
+
+    // fluxo ideal
+    return res.redirect("/");
+  });
 });
 
 // Ligar o servidor e permitir o acesso na porta 3000
